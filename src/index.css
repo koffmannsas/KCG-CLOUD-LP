@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Outfit", sans-serif;
+
+  --color-kcg-red: #C8102E;
+  --color-kcg-red-deep: #7A0B1D;
+  --color-kcg-black: #000000;
+  --color-kcg-white: #F5F5F5;
+  --color-kcg-gray: #8A8A8A;
+  --color-kcg-glow: rgba(200, 16, 46, 0.25);
+}
+
+html, body, #root {
+  height: auto;
+  min-height: 100%;
+  background: var(--color-kcg-black);
+  color: var(--color-kcg-white);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased selection:bg-kcg-red selection:text-white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tighter uppercase;
+  }
+}
+
+@layer components {
+  .kcg-glass {
+    @apply bg-black/40 backdrop-blur-xl border border-white/5;
+  }
+  
+  .kcg-btn-primary {
+    @apply bg-kcg-red text-white py-4 px-8 font-display font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300;
+  }
+
+  .kcg-btn-outline {
+    @apply border border-white/10 text-white py-4 px-8 font-display font-medium uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300;
+  }
+  
+  .kcg-card {
+    @apply bg-[#0A0A0A] border border-white/5 p-8 transition-all duration-500 hover:border-kcg-red/30 relative overflow-hidden;
+  }
+
+  .kcg-card::before {
+    content: "";
+    @apply absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none;
+  }
+
+  .kcg-text-premium {
+    @apply font-display font-medium uppercase tracking-tighter text-white/90;
+  }
+
+  .kcg-border-glow {
+    @apply border border-kcg-red/20 shadow-[0_0_20px_rgba(200,16,46,0.1)];
+  }
+
+  .kcg-paper {
+    @apply bg-[#0A0A0A] relative;
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .tracking-institution {
+    letter-spacing: 0.6em;
+  }
+}
+
+.kcg-red-gradient {
+  background: linear-gradient(135deg, #C8102E 0%, #7A0B1D 100%);
+}
+
+.kcg-bg-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(200, 16, 46, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(200, 16, 46, 0.05) 0px, transparent 50%);
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, #FFFFFF 60%, rgba(255, 255, 255, 0.4) 100%);
+}
+
+.glow-red {
+  box-shadow: 0 0 30px rgba(200, 16, 46, 0.2);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes infinite-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-infinite-scroll {
+  animation: infinite-scroll 40s linear infinite;
+}
