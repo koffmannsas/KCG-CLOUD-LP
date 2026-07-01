@@ -1,12 +1,34 @@
 # EXECUTIVE EXPERIENCE AUDIT™
 
 ## Contexte
-L'expérience utilisateur de KCG Executive Intelligence Network™ doit donner l'impression de piloter un Bloomberg Terminal nouvelle génération, et non une simple application.
+Cet audit analyse les points de friction dans l'expérience utilisateur du KCG Executive Intelligence Network™, en distinguant ce qui est réellement implémenté de ce qui reste à construire. L'objectif est d'atteindre le niveau d'exigence d'un Bloomberg Terminal.
 
-## Points de Friction Actuels & Optimisations
-1. **Onboarding :** Simplifier l'accueil des CEO.
-2. **Navigation :** Réduire le nombre de clics pour accéder à la War Room et au Boardroom.
-3. **Radio & Briefing :** Mettre en place un Morning Brief instantané.
-4. **Venture Intelligence :** Intégrer un radar interactif.
+## Analyse des Points de Friction
 
-Audit généré lors de la Phase 1 de l'Operation Black Diamond.
+### 1. Onboarding
+- **Statut :** 🔴 Not Implemented
+- **Problème :** Aucun processus d'accueil pour configurer le profil du CEO.
+- **Impact :** Élevé. Le CEO doit pouvoir définir ses centres d'intérêt immédiatement.
+- **Priorité :** P1
+- **Correction proposée :** Créer un module d'onboarding conversationnel.
+
+### 2. Temps avant premier briefing
+- **Statut :** 🟡 Mock / Placeholder
+- **Problème :** Le contenu actuel est générique et non personnalisé.
+- **Impact :** Critique.
+- **Priorité :** P1
+- **Correction proposée :** Connecter la page principale au moteur AI Quality Engine.
+
+### 3. Navigation & War Room
+- **Statut :** 🔵 Interface only
+- **Problème :** L'interface 3D existe (Three.js est configuré) mais n'a pas de contrôles de navigation dédiés pour accéder rapidement à la War Room ou au Boardroom.
+- **Impact :** Moyen.
+- **Priorité :** P2
+- **Correction proposée :** Implémenter une barre de navigation latérale de type HUD.
+
+### 4. Radio & Venture Intelligence
+- **Statut :** 🔴 Not Implemented
+- **Problème :** Le flux continu audio et le radar d'investissement ne sont pas connectés à des données backend.
+- **Impact :** Élevé.
+- **Priorité :** P2
+- **Correction proposée :** Lier @google-cloud/text-to-speech à un flux de données sectorielles en temps réel.

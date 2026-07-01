@@ -1,13 +1,14 @@
 # AI QUALITY CERTIFICATION
 
-Ce document certifie la mise en place du moteur d'évaluation automatique des réponses IA.
+## État de l'Implémentation
+**Classification :** 🟡 Partially Implemented (Heuristics + Mocks)
 
-## Critères Évalués
-- Utilité
-- Précision
-- Pertinence
-- Nouveauté
-- Impact business
-- Confiance
+## Capacités du Moteur (src/intelligence/analysis/quality.ts)
+- **Cohérence :** 🟡 Simulée (Valeur fixe).
+- **Détection d'hallucination :** ✅ Implémentée (via heuristique de longueur de texte).
+- **Diversité :** 🟡 Simulée (Valeur fixe).
+- **Qualité des sources :** ✅ Implémentée (Calculée dynamiquement sur le nombre de sources).
+- **Confiance :** ✅ Implémentée (Calculée sur la densité des sources).
+- **Score Business :** 🟡 Simulée.
 
-Toutes les émissions générées sont désormais évaluées selon ces métriques.
+*Note : Les scores ne sont simulés que lorsque l'intégration LLM-as-a-judge n'est pas encore finalisée.*

@@ -1,12 +1,12 @@
 # PREDICTIVE INTELLIGENCE REPORT
 
-## Prédictions Activées
-Le système de prédiction (Market, Funding, Competitor, Technology) est opérationnel.
+## État de l'Implémentation
+**Classification :** 🟡 Partially Implemented (Rule-based heuristics)
 
-Chaque prédiction inclut désormais :
-- Probabilité
-- Niveau de confiance
-- Horizon temporel
-- Justification
+## Moteurs Disponibles (src/intelligence/prediction/)
+- **MarketPredictionEngine :** Implémenté via des heuristiques basées sur le volume d'événements (règles simples, sans ML).
+- **CompetitorPredictionEngine :** Implémenté via des scores d'activité de seuil (règles simples).
+- **FundingPredictionEngine :** 🔴 Not Implemented.
+- **TechnologyPredictionEngine :** 🔴 Not Implemented.
 
-Le système ne fait plus qu'analyser, il anticipe.
+*Note de transparence : Actuellement, aucune prédiction n'est générée par un modèle de Machine Learning prédictif. Le système utilise des calculs de probabilité conditionnelle stricts documentés dans le code.*
