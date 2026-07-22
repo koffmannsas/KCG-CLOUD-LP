@@ -32,10 +32,12 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 py-4 flex items-center bg-black/90 backdrop-blur-3xl border-b border-white/5 transition-all duration-500"
     >
       <div className="w-full px-12 flex items-center justify-between mx-auto">
-        <a href="/" className="flex items-center gap-6 group">
+        <a href="/" aria-label="Accueil Koffmann Capital Group" className="flex items-center gap-6 group">
           <img 
-            src="https://firebasestorage.googleapis.com/v0/b/fgfs-ai.firebasestorage.app/o/logo%20KCG.png?alt=media&token=9561c060-cb6c-435b-a40b-ab2f5571e586" 
+            src="/assets/logo.png"
             alt="KCG Logo" 
+            width={64}
+            height={64}
             className="w-[90px] sm:w-[150px] lg:w-[200px] h-auto object-contain brightness-110 group-hover:scale-105 transition-transform"
           />
         </a>

@@ -12,8 +12,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLenis } from '@/src/hooks/use-lenis';
 
+import React, { Suspense, lazy } from 'react';
 import Navbar from '@/src/components/Navbar';
-import ThreeBackground from '@/src/components/ThreeBackground';
+const ThreeBackground = lazy(() => import('@/src/components/ThreeBackground'));
 import Hero from '@/src/sections/Hero';
 import Vision from '@/src/sections/Vision';
 import Ecosystem from '@/src/sections/Ecosystem';
@@ -196,8 +197,11 @@ export default function App() {
               <div className="absolute w-28 h-28 rounded-full kcg-glass flex items-center justify-center border border-kcg-red/30 shadow-[0_0_30px_rgba(200,16,46,0.15)] relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.05] pointer-events-none" />
                 <img 
-                  src="https://firebasestorage.googleapis.com/v0/b/fgfs-ai.firebasestorage.app/o/Logo%20GCG%20500X500.png?alt=media&token=0d7c51f1-ae14-4826-9438-98688980178c" 
+                  src="/assets/logo-500.png"
                   alt="KCG Monogram"
+                  width={64}
+                  height={64}
+                  loading="lazy"
                   className="w-16 h-16 object-contain relative z-10"
                 />
               </div>
@@ -232,7 +236,9 @@ export default function App() {
           >
             {activePage === 'home' ? (
               <>
-                <ThreeBackground />
+                <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
+                  <ThreeBackground />
+                </Suspense>
                 <Navbar />
                 <main>
                   <Hero />

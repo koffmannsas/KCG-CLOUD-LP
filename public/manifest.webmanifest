@@ -1,0 +1,21 @@
+{
+  "name": "Koffmann Capital Group",
+  "short_name": "KCG",
+  "description": "L'écosystème technologique et financier souverain.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#C8102E",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
