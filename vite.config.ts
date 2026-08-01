@@ -1,10 +1,10 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
+import {defineConfig, loadEnv} from 'vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [
@@ -33,14 +33,15 @@ export default defineConfig(({ mode }) => {
             'vendor-motion': ['motion', 'framer-motion'],
             'vendor-icons': ['lucide-react'],
             'vendor-store': ['zustand']
-            // We omit a catch-all "vendor-core" to allow Rollup to safely calculate the remaining chunk graph
-            // and avoid circular references or initialization order issues.
           }
         }
       }
     },
     server: {
+      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
+      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };

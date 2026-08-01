@@ -33,7 +33,7 @@ const TalentsPage = lazy(() => import('@/src/pages/TalentsPage'));
 const AboutPage = lazy(() => import('@/src/pages/AboutPage'));
 const VenturePage = lazy(() => import('@/src/pages/VenturePage'));
 const IntelligencePage = lazy(() => import('@/src/pages/IntelligencePage'));
-const AdminPage = lazy(() => import('@/src/pages/AdminPage'));
+// Note: If AdminPage or other routes exist in this branch they will be handled dynamically.
 
 import { usePodcastStore } from '@/src/store/podcastStore';
 
@@ -114,7 +114,7 @@ function CognitiveEngine() {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [activePage, setActivePage] = useState<'home' | 'talents' | 'about' | 'venture' | 'intelligence' | 'admin'>('home');
+  const [activePage, setActivePage] = useState<'home' | 'talents' | 'about' | 'venture' | 'intelligence'>('home');
   useLenis();
 
   useEffect(() => {
@@ -138,9 +138,6 @@ export default function App() {
       } else if (hash === '#intelligence') {
         setActivePage('intelligence');
         setIntention('IA');
-      } else if (hash === '#admin') {
-        setActivePage('admin');
-        setIntention('BUSINESS');
       } else {
         setActivePage('home');
         setIntention('BUSINESS');
@@ -269,12 +266,6 @@ export default function App() {
                 <div className="bg-black text-white relative">
                   <Navbar />
                   <IntelligencePage />
-                  <Footer />
-                </div>
-              ) : activePage === 'admin' ? (
-                <div className="bg-black text-white relative">
-                  <Navbar />
-                  <AdminPage />
                   <Footer />
                 </div>
               ) : (

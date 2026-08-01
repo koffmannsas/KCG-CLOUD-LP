@@ -28,10 +28,6 @@ async function startServer() {
 
   const ttsClient = new textToSpeech.TextToSpeechClient();
 
-  // Import AI Gateway
-  const { aiGatewayRouter } = await import('./ai-gateway.js').catch(e => import('./ai-gateway.ts'));
-  app.use('/api/ai', aiGatewayRouter);
-
   app.post("/api/tts", async (req, res) => {
     try {
       const { text } = req.body;
