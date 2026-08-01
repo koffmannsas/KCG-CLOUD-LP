@@ -27,19 +27,14 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('three') || id.includes('@react-three')) {
-                return 'vendor-three';
-              }
-              if (id.includes('framer-motion') || id.includes('motion')) {
-                return 'vendor-motion';
-              }
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor-react';
-              }
-              return 'vendor-core';
-            }
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+            'vendor-motion': ['motion', 'framer-motion'],
+            'vendor-icons': ['lucide-react'],
+            'vendor-store': ['zustand']
+            // We omit a catch-all "vendor-core" to allow Rollup to safely calculate the remaining chunk graph
+            // and avoid circular references or initialization order issues.
           }
         }
       }
