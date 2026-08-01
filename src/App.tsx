@@ -12,24 +12,28 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLenis } from '@/src/hooks/use-lenis';
 
+import { Suspense, lazy } from 'react';
 import Navbar from '@/src/components/Navbar';
-import ThreeBackground from '@/src/components/ThreeBackground';
-import Hero from '@/src/sections/Hero';
-import Vision from '@/src/sections/Vision';
-import Ecosystem from '@/src/sections/Ecosystem';
-import Intelligence from '@/src/sections/Intelligence';
-import WhyKCG from '@/src/sections/WhyKCG';
-import Leadership from '@/src/sections/Leadership';
-import Talents from '@/src/sections/Talents';
-import Newsletter from '@/src/sections/Newsletter';
-import Footer from '@/src/sections/Footer';
-import TalentsPage from '@/src/pages/TalentsPage';
-import AboutPage from '@/src/pages/AboutPage';
 import GlobalPodcastPlayer from '@/src/components/GlobalPodcastPlayer';
+import Footer from '@/src/sections/Footer';
 
-import VenturePage from '@/src/pages/VenturePage';
-import IntelligencePage from '@/src/pages/IntelligencePage';
-import AdminPage from '@/src/pages/AdminPage';
+// Lazy loaded heavy components
+const ThreeBackground = lazy(() => import('@/src/components/ThreeBackground'));
+const Hero = lazy(() => import('@/src/sections/Hero'));
+const Vision = lazy(() => import('@/src/sections/Vision'));
+const Ecosystem = lazy(() => import('@/src/sections/Ecosystem'));
+const Intelligence = lazy(() => import('@/src/sections/Intelligence'));
+const WhyKCG = lazy(() => import('@/src/sections/WhyKCG'));
+const Leadership = lazy(() => import('@/src/sections/Leadership'));
+const Talents = lazy(() => import('@/src/sections/Talents'));
+const Newsletter = lazy(() => import('@/src/sections/Newsletter'));
+
+// Lazy loaded routes
+const TalentsPage = lazy(() => import('@/src/pages/TalentsPage'));
+const AboutPage = lazy(() => import('@/src/pages/AboutPage'));
+const VenturePage = lazy(() => import('@/src/pages/VenturePage'));
+const IntelligencePage = lazy(() => import('@/src/pages/IntelligencePage'));
+const AdminPage = lazy(() => import('@/src/pages/AdminPage'));
 
 import { usePodcastStore } from '@/src/store/podcastStore';
 
@@ -227,58 +231,60 @@ export default function App() {
         )}
 
         {!loading && (
-          <motion.div
-            key={activePage}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {activePage === 'home' ? (
-              <>
-                <ThreeBackground />
-                <Navbar />
-                <main>
-                  <Hero />
-                  <Vision />
-                  <Ecosystem />
-                  <Intelligence />
-                  <WhyKCG />
-                  <Leadership />
-                  <Talents />
-                  <Newsletter />
-                </main>
-                <Footer />
-              </>
-            ) : activePage === 'about' ? (
-              <>
-                <AboutPage />
-              </>
-            ) : activePage === 'venture' ? (
-              <div className="bg-black text-white relative">
-                <Navbar />
-                <VenturePage />
-                <Footer />
-              </div>
-            ) : activePage === 'intelligence' ? (
-              <div className="bg-black text-white relative">
-                <Navbar />
-                <IntelligencePage />
-                <Footer />
-              </div>
-            ) : activePage === 'admin' ? (
-              <div className="bg-black text-white relative">
-                <Navbar />
-                <AdminPage />
-                <Footer />
-              </div>
-            ) : (
-              <>
-                <TalentsPage />
-                <Footer />
-              </>
-            )}
-          </motion.div>
+          <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-kcg-red border-t-transparent animate-spin" /></div>}>
+            <motion.div
+              key={activePage}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {activePage === 'home' ? (
+                <>
+                  <ThreeBackground />
+                  <Navbar />
+                  <main>
+                    <Hero />
+                    <Vision />
+                    <Ecosystem />
+                    <Intelligence />
+                    <WhyKCG />
+                    <Leadership />
+                    <Talents />
+                    <Newsletter />
+                  </main>
+                  <Footer />
+                </>
+              ) : activePage === 'about' ? (
+                <>
+                  <AboutPage />
+                </>
+              ) : activePage === 'venture' ? (
+                <div className="bg-black text-white relative">
+                  <Navbar />
+                  <VenturePage />
+                  <Footer />
+                </div>
+              ) : activePage === 'intelligence' ? (
+                <div className="bg-black text-white relative">
+                  <Navbar />
+                  <IntelligencePage />
+                  <Footer />
+                </div>
+              ) : activePage === 'admin' ? (
+                <div className="bg-black text-white relative">
+                  <Navbar />
+                  <AdminPage />
+                  <Footer />
+                </div>
+              ) : (
+                <>
+                  <TalentsPage />
+                  <Footer />
+                </>
+              )}
+            </motion.div>
+          </Suspense>
         )}
       </AnimatePresence>
 
