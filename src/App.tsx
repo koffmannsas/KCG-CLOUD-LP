@@ -123,22 +123,24 @@ export default function App() {
 
   useEffect(() => {
     // Basic router logic
-    const handleHash = () => {
+    const handleNavigation = () => {
       const hash = window.location.hash;
+      const pathname = window.location.pathname;
       const setIntention = usePodcastStore.getState().setIntention;
-      if (hash === '#talents-portal') {
+
+      if (hash === '#talents-portal' || pathname === '/talents-portal' || pathname === '/talents') {
         setActivePage('talents');
         setIntention('TALENT');
-      } else if (hash === '#about') {
+      } else if (hash === '#about' || pathname === '/about') {
         setActivePage('about');
         setIntention('VISION');
-      } else if (hash === '#venture') {
+      } else if (hash === '#venture' || pathname === '/venture') {
         setActivePage('venture');
         setIntention('BUSINESS');
-      } else if (hash === '#intelligence') {
+      } else if (hash === '#intelligence' || pathname === '/intelligence') {
         setActivePage('intelligence');
         setIntention('IA');
-      } else if (hash === '#contact') {
+      } else if (hash === '#contact' || pathname === '/contact') {
         setActivePage('contact');
         setIntention('BUSINESS');
       } else {
@@ -147,14 +149,16 @@ export default function App() {
       }
     };
 
-    window.addEventListener('hashchange', handleHash);
-    handleHash();
+    window.addEventListener('hashchange', handleNavigation);
+    window.addEventListener('popstate', handleNavigation);
+    handleNavigation();
 
     // Simulate loading of assets and heavy Three.js resources
     const timer = setTimeout(() => setLoading(false), 5000);
     return () => {
       clearTimeout(timer);
-      window.removeEventListener('hashchange', handleHash);
+      window.removeEventListener('hashchange', handleNavigation);
+      window.removeEventListener('popstate', handleNavigation);
     };
   }, []);
 
@@ -231,14 +235,22 @@ export default function App() {
         )}
 
         {!loading && (
-          <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-kcg-red border-t-transparent animate-spin" /></div>}>
-            <motion.div
-              key={activePage}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+          <motion.div
+            key="app-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-kcg-red border-t-transparent animate-spin" /></div>}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activePage}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5 }}
+                >
               {activePage === 'home' ? (
                 <>
                   <ThreeBackground />
@@ -277,8 +289,10 @@ export default function App() {
                   <Footer />
                 </>
               )}
-            </motion.div>
-          </Suspense>
+                </motion.div>
+              </AnimatePresence>
+            </Suspense>
+          </motion.div>
         )}
       </AnimatePresence>
 
