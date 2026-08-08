@@ -47,7 +47,7 @@ const NETWORK_NODES: NetworkNode[] = [
     nourishes: 'Irrigue l\'ensemble de l\'écosystème en allouant les liquidités de KCG Capital et en orientant les priorités souveraines.',
     connections: ['fiko-ai', 'fiko-pay', 'fiko-connect', 'mavo', 'kcg-mining', 'helix-energy'],
     metrics: [
-      { label: 'AUM COORDONNÉ', value: '€2.4B' },
+      { label: 'AUM COORDONNÉ', value: '1 500 Milliards FCFA' },
       { label: 'NŒUDS INTÉGRÉS', value: '100%' }
     ]
   },
@@ -98,7 +98,7 @@ const NETWORK_NODES: NetworkNode[] = [
     nourishes: 'Garantit des transactions transfrontalières sans friction pour MAVO et KCG Mining, fluidifiant les flux financiers.',
     connections: ['kcg-core', 'mavo'],
     metrics: [
-      { label: 'VOLUME MENSUEL', value: '€140M+' },
+      { label: 'VOLUME MENSUEL', value: '90 Milliards FCFA+' },
       { label: 'SÉCURITÉ LEDGER', value: 'AES-256' }
     ]
   },
@@ -222,7 +222,7 @@ const PILLARS: Pillar[] = [
     mission: "Architecturer les véhicules financiers souverains de long terme pour catalyser la croissance industrielle.",
     icon: TrendingUp,
     brands: ["FIKO PAY", "Sovereign Yield™", "KCG Capital™"],
-    metrics: { label: "CAPITAL COORDONNÉ", value: "3.84B $" }
+    metrics: { label: "CAPITAL COORDONNÉ", value: "2 400 Milliards FCFA" }
   },
   {
     num: "03",

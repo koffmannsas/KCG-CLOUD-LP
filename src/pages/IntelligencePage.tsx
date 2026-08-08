@@ -81,7 +81,7 @@ function TerminalHero() {
                 <div className="text-[10px] text-green-500 uppercase tracking-widest mb-4">Live Monitoring</div>
                 {[
                   { label: "UEMOA LOGISTICS PIPELINE", val: "ACTIVE", load: 88, alert: false },
-                  { label: "CFA/EUR VOLATILITY IDX", val: "NOMINAL", load: 12, alert: false },
+                  { label: "XOF STABILITY INDEX", val: "NOMINAL", load: 12, alert: false },
                   { label: "TECH TALENT ACQUISITION", val: "HIGH DEMAND", load: 94, alert: true },
                   { label: "AGRO-SUPPLY CHAIN (CI)", val: "ROUTING", load: 67, alert: false },
                 ].map((syst, i) => (

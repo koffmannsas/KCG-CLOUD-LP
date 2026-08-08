@@ -419,7 +419,11 @@ export default function GlobalPodcastPlayer() {
       setIsPlaying(true);
     } catch (e: any) {
       if (e.name !== 'AbortError') {
-        console.error('Audio play failed:', e);
+        if (e.name === 'NotAllowedError') {
+          console.warn('Audio play deferred: Playback requires user interaction first.');
+        } else {
+          console.warn('Audio play failed (non-blocking):', e);
+        }
         setIsPlaying(false);
       } else {
         console.warn('Audio play interrupted by a new load request (expected behavior during rapid chunk generation).');
@@ -635,7 +639,11 @@ export default function GlobalPodcastPlayer() {
         if (globalAudio.src && !globalAudio.src.endsWith(window.location.host + '/')) {
           globalAudio.play().catch(e => {
             if (e.name !== 'AbortError') {
-              console.error('Play failed:', e);
+              if (e.name === 'NotAllowedError') {
+                console.warn('Play deferred: Playback requires user interaction first.');
+              } else {
+                console.warn('Play failed (non-blocking):', e);
+              }
               setIsPlaying(false);
             } else {
               console.warn('Play interrupted.');

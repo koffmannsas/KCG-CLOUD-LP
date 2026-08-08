@@ -70,10 +70,13 @@ export default function Navbar() {
             </span>
           </button>
           
-          <button className="kcg-btn-outline !py-2.5 !px-6 rounded-full group flex items-center gap-3">
+          <a
+            href="#contact"
+            className="kcg-btn-outline !py-2.5 !px-6 rounded-full group flex items-center gap-3 cursor-pointer"
+          >
             Contact
             <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-          </button>
+          </a>
         </div>
 
         {/* Mobile Toggle */}
@@ -113,9 +116,13 @@ export default function Navbar() {
             <Radio className="w-4 h-4 animate-pulse" />
             Radio Stratégique
           </button>
-          <button className="bg-primary text-white py-4 rounded-xl font-bold">
+          <a
+            href="#contact"
+            onClick={() => setIsOpen(false)}
+            className="bg-primary text-white py-4 rounded-xl font-bold text-center block uppercase tracking-widest text-xs"
+          >
             Nous Contacter
-          </button>
+          </a>
         </motion.div>
       )}
     </motion.nav>

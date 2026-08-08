@@ -36,7 +36,7 @@ export default function Newsletter() {
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-kcg-red/40" />
                 <input 
                   type="email" 
-                  placeholder="stratège@domaine.kcg"
+                  placeholder="nom@koffmann.group"
                   className="w-full bg-white/[0.02] border border-white/10 rounded-full py-5 pl-14 pr-8 text-white placeholder:text-white/20 focus:outline-none focus:border-kcg-red/40 transition-all font-black text-xs uppercase tracking-widest"
                 />
               </div>

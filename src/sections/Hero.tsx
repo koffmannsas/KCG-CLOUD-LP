@@ -55,8 +55,6 @@ export default function Hero() {
           <img
             src={kcgAfricaRising}
             alt="KCG Africa Rising"
-            loading="eager"
-            fetchPriority="high"
             referrerPolicy="no-referrer"
             className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-screen"
             style={{

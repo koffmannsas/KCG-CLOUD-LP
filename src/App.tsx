@@ -13,7 +13,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useLenis } from '@/src/hooks/use-lenis';
 
 import { Suspense, lazy } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from '@/src/components/Navbar';
 import GlobalPodcastPlayer from '@/src/components/GlobalPodcastPlayer';
 import Footer from '@/src/sections/Footer';
@@ -34,24 +33,7 @@ const TalentsPage = lazy(() => import('@/src/pages/TalentsPage'));
 const AboutPage = lazy(() => import('@/src/pages/AboutPage'));
 const VenturePage = lazy(() => import('@/src/pages/VenturePage'));
 const IntelligencePage = lazy(() => import('@/src/pages/IntelligencePage'));
-
-// New Institutional Routes
-const EcosystemPage = lazy(() => import('@/src/pages/EcosystemPage'));
-const KcgCorePage = lazy(() => import('@/src/pages/KcgCorePage'));
-const CloudPage = lazy(() => import('@/src/pages/CloudPage'));
-const AiPage = lazy(() => import('@/src/pages/AiPage'));
-const InvestmentsPage = lazy(() => import('@/src/pages/InvestmentsPage'));
-const LeadershipPage = lazy(() => import('@/src/pages/LeadershipPage'));
-const CareersPage = lazy(() => import('@/src/pages/CareersPage'));
 const ContactPage = lazy(() => import('@/src/pages/ContactPage'));
-const NewsroomPage = lazy(() => import('@/src/pages/NewsroomPage'));
-const MediaPage = lazy(() => import('@/src/pages/MediaPage'));
-
-// Auth & Admin
-const AdminLoginPage = lazy(() => import('@/src/pages/AdminLoginPage'));
-const DashboardPage = lazy(() => import('@/src/pages/DashboardPage'));
-const EnterpriseLayout = lazy(() => import('@/src/components/layout/EnterpriseLayout'));
-const ProtectedRoutes = lazy(() => import('@/src/core/auth/ProtectedRoutes'));
 
 import { usePodcastStore } from '@/src/store/podcastStore';
 
@@ -132,18 +114,47 @@ function CognitiveEngine() {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [activePage, setActivePage] = useState<'home' | 'talents' | 'about' | 'venture' | 'intelligence' | 'contact'>('home');
   useLenis();
-  const location = useLocation();
 
   useEffect(() => {
     usePodcastStore.getState().incrementVisitCount();
   }, []);
 
   useEffect(() => {
+    // Basic router logic
+    const handleHash = () => {
+      const hash = window.location.hash;
+      const setIntention = usePodcastStore.getState().setIntention;
+      if (hash === '#talents-portal') {
+        setActivePage('talents');
+        setIntention('TALENT');
+      } else if (hash === '#about') {
+        setActivePage('about');
+        setIntention('VISION');
+      } else if (hash === '#venture') {
+        setActivePage('venture');
+        setIntention('BUSINESS');
+      } else if (hash === '#intelligence') {
+        setActivePage('intelligence');
+        setIntention('IA');
+      } else if (hash === '#contact') {
+        setActivePage('contact');
+        setIntention('BUSINESS');
+      } else {
+        setActivePage('home');
+        setIntention('BUSINESS');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHash);
+    handleHash();
+
     // Simulate loading of assets and heavy Three.js resources
     const timer = setTimeout(() => setLoading(false), 5000);
     return () => {
       clearTimeout(timer);
+      window.removeEventListener('hashchange', handleHash);
     };
   }, []);
 
@@ -221,64 +232,52 @@ export default function App() {
 
         {!loading && (
           <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-kcg-red border-t-transparent animate-spin" /></div>}>
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-
-                {/* Home route remains distinct because of its immersive full-screen ThreeJS background */}
-                <Route path="/" element={
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-                    <ThreeBackground />
-                    <Navbar />
-                    <main>
-                      <Hero />
-                      <Vision />
-                      <Ecosystem />
-                      <Intelligence />
-                      <WhyKCG />
-                      <Leadership />
-                      <Talents />
-                      <Newsletter />
-                    </main>
-                    <Footer />
-                  </motion.div>
-                } />
-
-                {/* Institutional Routes wrapped in Enterprise Layout */}
-                <Route element={<EnterpriseLayout />}>
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/venture" element={<VenturePage />} />
-                  <Route path="/intelligence" element={<IntelligencePage />} />
-                  <Route path="/talents-portal" element={<TalentsPage />} />
-                  <Route path="/ecosystem" element={<EcosystemPage />} />
-                  <Route path="/kcg-core" element={<KcgCorePage />} />
-                  <Route path="/cloud" element={<CloudPage />} />
-                  <Route path="/ai" element={<AiPage />} />
-                  <Route path="/investments" element={<InvestmentsPage />} />
-                  <Route path="/leadership" element={<LeadershipPage />} />
-                  <Route path="/careers" element={<CareersPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/newsroom" element={<NewsroomPage />} />
-                  <Route path="/media" element={<MediaPage />} />
-                </Route>
-
-                {/* Admin / Auth Routes */}
-                <Route path="/admin/login" element={<AdminLoginPage />} />
-
-                {/* Protected Admin Routes */}
-                <Route element={<ProtectedRoutes />}>
-                  <Route path="/admin/dashboard" element={<DashboardPage />} />
-                </Route>
-
-                {/* Fallback 404 */}
-                <Route path="*" element={
-                  <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
-                    <h1 className="text-4xl font-display font-bold">404</h1>
-                    <p className="text-neutral-500 mt-2">RESOURCE NOT FOUND</p>
-                  </div>
-                } />
-
-              </Routes>
-            </AnimatePresence>
+            <motion.div
+              key={activePage}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {activePage === 'home' ? (
+                <>
+                  <ThreeBackground />
+                  <Navbar />
+                  <main>
+                    <Hero />
+                    <Vision />
+                    <Ecosystem />
+                    <Intelligence />
+                    <WhyKCG />
+                    <Leadership />
+                    <Talents />
+                    <Newsletter />
+                  </main>
+                  <Footer />
+                </>
+              ) : activePage === 'about' ? (
+                <AboutPage />
+              ) : activePage === 'venture' ? (
+                <div className="bg-black text-white relative">
+                  <Navbar />
+                  <VenturePage />
+                  <Footer />
+                </div>
+              ) : activePage === 'intelligence' ? (
+                <div className="bg-black text-white relative">
+                  <Navbar />
+                  <IntelligencePage />
+                  <Footer />
+                </div>
+              ) : activePage === 'contact' ? (
+                <ContactPage />
+              ) : (
+                <>
+                  <TalentsPage />
+                  <Footer />
+                </>
+              )}
+            </motion.div>
           </Suspense>
         )}
       </AnimatePresence>
