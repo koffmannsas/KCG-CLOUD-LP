@@ -4,7 +4,6 @@ import { Play, Pause, SkipBack, SkipForward, X, RadioReceiver, Loader2, Signal, 
 import { usePodcastStore, globalAudio, globalAudioCache } from '../store/podcastStore';
 import { LETTERS } from '../data/letters';
 import { cn } from '../lib/utils';
-import { KCGAI } from '../lib/kcg-ai-sdk';
 
 const CAPSULES = [
   "Capsule IA : KCG développe des infrastructures d’intelligence artificielle capables d’accélérer la transformation numérique des entreprises africaines.",
@@ -199,7 +198,8 @@ export default function GlobalPodcastPlayer() {
     }
     
     try {
-      const ai = new KCGAI();
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const prompt = `
         Tu es le Host IA (l'intelligence institutionnelle) de KCG Strategic Radio. L'auditeur vient de te demander : "${chatQuery}".
         L'état mental déduit de l'auditeur est "${usePodcastStore.getState().emotion}".
@@ -207,8 +207,12 @@ export default function GlobalPodcastPlayer() {
         Réponds en 3 à 4 phrases maximum.
         Ne mets pas de guillemets ni d'indications de jeu, juste le texte audio.
       `;
-      const answerText = await ai.generate(prompt, { type: 'text' });
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt
+      });
       
+      const answerText = response.text.trim();
       const newUrl = await generateAudioChunk(answerText);
       
       // Inject to queue
@@ -285,9 +289,23 @@ export default function GlobalPodcastPlayer() {
     if (globalAudioCache.has(hashKey)) return globalAudioCache.get(hashKey)!;
 
     try {
-      const ai = new KCGAI();
-      const base64Audio = await ai.generate(text, { type: 'audio' });
+      const { GoogleGenAI, Modality } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      
+      const response = await ai.models.generateContent({
+        model: "gemini-3.1-flash-tts-preview",
+        contents: [{ parts: [{ text }] }],
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: 'Charon' },
+              },
+          },
+        },
+      });
 
+      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
       if (!base64Audio) throw new Error('No audio returned');
 
       const binaryString = atob(base64Audio);
@@ -401,7 +419,11 @@ export default function GlobalPodcastPlayer() {
       setIsPlaying(true);
     } catch (e: any) {
       if (e.name !== 'AbortError') {
-        console.error('Audio play failed:', e);
+        if (e.name === 'NotAllowedError') {
+          console.warn('Audio play deferred: Playback requires user interaction first.');
+        } else {
+          console.warn('Audio play failed (non-blocking):', e);
+        }
         setIsPlaying(false);
       } else {
         console.warn('Audio play interrupted by a new load request (expected behavior during rapid chunk generation).');
@@ -617,7 +639,11 @@ export default function GlobalPodcastPlayer() {
         if (globalAudio.src && !globalAudio.src.endsWith(window.location.host + '/')) {
           globalAudio.play().catch(e => {
             if (e.name !== 'AbortError') {
-              console.error('Play failed:', e);
+              if (e.name === 'NotAllowedError') {
+                console.warn('Play deferred: Playback requires user interaction first.');
+              } else {
+                console.warn('Play failed (non-blocking):', e);
+              }
               setIsPlaying(false);
             } else {
               console.warn('Play interrupted.');

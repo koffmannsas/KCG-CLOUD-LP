@@ -29,7 +29,7 @@ import GlobalPodcastPlayer from '@/src/components/GlobalPodcastPlayer';
 
 import VenturePage from '@/src/pages/VenturePage';
 import IntelligencePage from '@/src/pages/IntelligencePage';
-import AdminPage from '@/src/pages/AdminPage';
+import ContactPage from '@/src/pages/ContactPage';
 
 import { usePodcastStore } from '@/src/store/podcastStore';
 
@@ -110,7 +110,7 @@ function CognitiveEngine() {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [activePage, setActivePage] = useState<'home' | 'talents' | 'about' | 'venture' | 'intelligence' | 'admin'>('home');
+  const [activePage, setActivePage] = useState<'home' | 'talents' | 'about' | 'venture' | 'intelligence' | 'contact'>('home');
   useLenis();
 
   useEffect(() => {
@@ -134,8 +134,8 @@ export default function App() {
       } else if (hash === '#intelligence') {
         setActivePage('intelligence');
         setIntention('IA');
-      } else if (hash === '#admin') {
-        setActivePage('admin');
+      } else if (hash === '#contact') {
+        setActivePage('contact');
         setIntention('BUSINESS');
       } else {
         setActivePage('home');
@@ -266,12 +266,8 @@ export default function App() {
                 <IntelligencePage />
                 <Footer />
               </div>
-            ) : activePage === 'admin' ? (
-              <div className="bg-black text-white relative">
-                <Navbar />
-                <AdminPage />
-                <Footer />
-              </div>
+            ) : activePage === 'contact' ? (
+              <ContactPage />
             ) : (
               <>
                 <TalentsPage />

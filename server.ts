@@ -26,15 +26,14 @@ async function startServer() {
 
   app.use(express.json());
 
-  const ttsClient = new textToSpeech.TextToSpeechClient();
-
-  // Import AI Gateway
-  const { aiGatewayRouter } = await import('./ai-gateway.js').catch(e => import('./ai-gateway.ts'));
-  app.use('/api/ai', aiGatewayRouter);
+  let ttsClient: any = null;
 
   app.post("/api/tts", async (req, res) => {
     try {
       const { text } = req.body;
+      if (!ttsClient) {
+        ttsClient = new textToSpeech.TextToSpeechClient();
+      }
       const [response] = await ttsClient.synthesizeSpeech({
         input: { text },
         voice: { languageCode: 'fr-FR', name: 'fr-FR-Neural2-B' },

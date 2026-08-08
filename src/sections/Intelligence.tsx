@@ -11,10 +11,94 @@ import {
   CornerDownRight, 
   ShieldAlert, 
   Database,
-  ArrowRight
+  ArrowRight,
+  Eye,
+  Video,
+  Globe,
+  Map
 } from 'lucide-react';
 
 type IntelligenceTab = 'logistics' | 'finance' | 'agriculture';
+
+interface CinematicScene {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: any;
+  ambiance: string;
+  rendering: string;
+  flowSpeed: string;
+  telemetry: { label: string; value: string; status?: 'optimal' | 'warning' | 'nominal' }[];
+  visualEffect: string;
+  projectionLabel: string;
+}
+
+const CINEMATIC_SCENES: CinematicScene[] = [
+  {
+    id: 'transactional-tree',
+    title: 'L\'Arbre de Vie Transactionnel',
+    subtitle: 'RÉSEAU DE LIQUIDITÉS ET COMPENSATION SOUVERAINE',
+    icon: Globe,
+    ambiance: 'Projections holographiques d\'or liquide circulant le long de méridiens cryptographiques à travers l\'Afrique de l\'Ouest.',
+    rendering: 'Modélisation volumétrique 3D où des impulsions lumineuses rouges KCG tracent en temps réel les cycles de compensation monétaire de FIKO PAY entre Dakar, Abidjan et Bamako, contournant de manière autonome les goulots d\'étranglement traditionnels de l\'UEMOA.',
+    flowSpeed: '4.8 TB/s',
+    telemetry: [
+      { label: 'Stabilité du Ledger', value: '99.999%', status: 'optimal' },
+      { label: 'Compensation Node', value: 'Active (Dakar Hub)', status: 'nominal' },
+      { label: 'Latence Inter-fiat', value: '0.004 ms', status: 'optimal' }
+    ],
+    visualEffect: 'pulsing-nodes',
+    projectionLabel: 'HOLO_TRANS_PROJ_982'
+  },
+  {
+    id: 'corridor-shuttle',
+    title: 'Le Corridor de Fer Autonome',
+    subtitle: 'CARTOGRAPHIE PRÉDICTIVE ET LOGISTIQUE MULTIMODALE',
+    icon: Map,
+    ambiance: 'Maillage vectoriel topographique en fil de fer vert émeraude et rouge vermillon représentant les routes de transit.',
+    rendering: 'Une carte d\'altitude tridimensionnelle projetée, montrant la flotte de fret autonome AIRVOO. Le modèle d\'IA KRYPTON anticipe les perturbations météorologiques régionales pour recalculer les trajectoires d\'approvisionnement en métaux critiques de KCG Mining.',
+    flowSpeed: '940 MS/s',
+    telemetry: [
+      { label: 'Calcul Trajectoire', value: 'Optimisé (Delta-3)', status: 'optimal' },
+      { label: 'Résilience Climat', value: '98.4%', status: 'optimal' },
+      { label: 'Alerte Trafic', value: 'Friction: 0.1%', status: 'nominal' }
+    ],
+    visualEffect: 'vector-terrain',
+    projectionLabel: 'CORRIDOR_VECT_MAP_04'
+  },
+  {
+    id: 'nexus-krypton',
+    title: 'Le Nexus Souverain Krypton',
+    subtitle: 'NUCLEUS DÉCISIONNEL DE L\'ÉCOSYSTÈME KCG',
+    icon: Cpu,
+    ambiance: 'Interface circulaire de commandement en rotation cybernétique lente destinée au comité de gouvernance.',
+    rendering: 'Structure concentrique d\'anneaux de données affichant les indicateurs d\'arbitrage macroéconomique et l\'allocation de capital-risque en temps réel. Des flux de télémétrie descendent en cascade pour valider la conformité cryptographique de l\'empire de co-investissement.',
+    flowSpeed: '12.4 GLOPs',
+    telemetry: [
+      { label: 'Allocation Active', value: 'Automatisée', status: 'optimal' },
+      { label: 'Garantie Sécurité', value: 'AES-256 Multi-Sig', status: 'optimal' },
+      { label: 'Flux d\'Arbitrage', value: 'Simulé à 94.2%', status: 'nominal' }
+    ],
+    visualEffect: 'spinning-rings',
+    projectionLabel: 'NEXUS_GOV_CORE_88'
+  },
+  {
+    id: 'crop-pulse',
+    title: 'La Pulsation des Récoltes Connectées',
+    subtitle: 'MODÉLISATION BIOCLIMATIQUE ET RENDEMENT OPTIMISÉ',
+    icon: Sparkles,
+    ambiance: 'Grille matricielle de capteurs agricoles projetant des ondes d\'hydratation et d\'évaluation du sol.',
+    rendering: 'Visualisation thermique des zones de culture de cacao et de céréales de Côte d\'Ivoire et du Ghana. L\'IA interprète en temps réel les indices d\'humidité et déclenche des alertes bioclimatiques de sécheresse pour ajuster la micro-irrigation connectée.',
+    flowSpeed: '280 KS/s',
+    telemetry: [
+      { label: 'Score d\'Hydratation', value: '68% (Optimal)', status: 'optimal' },
+      { label: 'Menace Sécheresse', value: '1.4% (Négligeable)', status: 'nominal' },
+      { label: 'Gain de Rendement', value: '+28.4% (Est.)', status: 'optimal' }
+    ],
+    visualEffect: 'biometric-waves',
+    projectionLabel: 'AGRO_CROP_GRID_221'
+  }
+];
 
 export default function Intelligence() {
   const [activeTab, setActiveTab] = useState<IntelligenceTab>('logistics');
@@ -26,9 +110,10 @@ export default function Intelligence() {
     "All cognitive models: ONLINE."
   ]);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [activeScene, setActiveScene] = useState<string>(CINEMATIC_SCENES[0].id);
 
   // Auto-scrolling logs
-  const [liveLog, setLiveLog] = useState<string>("[KCG-AI] Monitoring currency volatility index (CFA/EUR)");
+  const [liveLog, setLiveLog] = useState<string>("[KCG-AI] Monitoring currency stability index (XOF)");
 
   useEffect(() => {
     const liveLogItems = [
@@ -68,6 +153,9 @@ export default function Intelligence() {
       setIsProcessing(false);
     }, 1800);
   };
+
+  const selectedScene = CINEMATIC_SCENES.find(s => s.id === activeScene) || CINEMATIC_SCENES[0];
+  const SceneIcon = selectedScene.icon;
 
   return (
     <section id="intelligence" className="py-32 bg-black relative overflow-hidden select-none font-sans">
@@ -276,8 +364,8 @@ export default function Intelligence() {
                         <span>[ARBITRAGE_ENGINE] COMPENSATING LEDGER IN REAL-TIME</span>
                       </div>
                       <div className="text-neutral-400 flex justify-between">
-                        <span>XOF_EUR COMPULSION ROUTE TO DAKAR NODE</span>
-                        <span className="text-white">€140,000 COMPENSATION EXEC: SUCCESS</span>
+                        <span>XOF COMPULSION ROUTE TO DAKAR NODE</span>
+                        <span className="text-white">90 000 000 FCFA COMPENSATION EXEC: SUCCESS</span>
                       </div>
                       <div className="text-neutral-400 flex justify-between">
                         <span>LIQUIDITY MITIGATION IN PROGRESS (ABIDJAN-LAGOS LINK)</span>
@@ -401,6 +489,226 @@ export default function Intelligence() {
 
       </div>
 
+      {/* ================= INTERACTIVE CINEMATIC HOLOGRAPHIC SCENES SHOWCASE ================= */}
+      <div className="max-w-[1440px] mx-auto px-6 mt-32 relative z-20">
+        
+        <div className="border-t border-white/10 pt-16 mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-3">
+            <span className="text-[9.5px] font-mono text-kcg-red uppercase tracking-[0.35em] font-black block">
+              STUDIO DE PROJECTION VOLUMÉTRIQUE
+            </span>
+            <h3 className="text-3xl md:text-4xl font-display font-bold uppercase tracking-tight text-white leading-none">
+              SCÉNOGRAPHIES ET SIMULATIONS HOLO-SOUVERAINES
+            </h3>
+          </div>
+          <p className="text-neutral-500 text-xs font-light max-w-md font-sans leading-relaxed">
+            Consultez les modélisations tridimensionnelles de notre suite d'intelligence. Activez chaque scène cinématique pour décoder son architecture de rendu et ses flux analytiques.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-12 items-stretch">
+          
+          {/* List of scenes (Selectors) */}
+          <div className="lg:col-span-5 space-y-4">
+            {CINEMATIC_SCENES.map((scene) => {
+              const Icon = scene.icon;
+              const isSelected = activeScene === scene.id;
+              
+              return (
+                <button
+                  key={scene.id}
+                  onClick={() => setActiveScene(scene.id)}
+                  className={`cursor-pointer w-full text-left p-6 rounded-[20px] border transition-all duration-500 flex items-start gap-4 select-none relative overflow-hidden group ${
+                    isSelected 
+                      ? 'bg-gradient-to-r from-kcg-red/[0.04] to-transparent border-kcg-red/30 shadow-[0_0_20px_rgba(200,16,46,0.05)]' 
+                      : 'bg-white/[0.01] border-white/5 hover:border-white/15'
+                  }`}
+                >
+                  {/* Left edge indicator */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-[3px] transition-all duration-500 ${
+                    isSelected ? 'bg-kcg-red' : 'bg-transparent'
+                  }`} />
+
+                  {/* Icon wrap with high-tech look */}
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-all duration-500 shrink-0 ${
+                    isSelected 
+                      ? 'bg-kcg-red/10 border-kcg-red text-kcg-red shadow-[0_0_15px_rgba(200,16,46,0.2)]' 
+                      : 'bg-white/[0.02] border-white/5 text-neutral-400 group-hover:text-white'
+                  }`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+
+                  <div className="space-y-1.5 flex-1 min-w-0">
+                    <span className="block text-[8px] font-mono text-neutral-500 tracking-widest uppercase">
+                      {scene.projectionLabel}
+                    </span>
+                    <h4 className="text-sm font-display font-extrabold text-white uppercase tracking-tight truncate">
+                      {scene.title}
+                    </h4>
+                    <p className="text-[10.5px] text-neutral-400 font-sans font-light line-clamp-2 leading-relaxed">
+                      {scene.subtitle}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active scene detail visualization (Jarvis / Sci-fi holographic projector look) */}
+          <div className="lg:col-span-7 flex">
+            <div className="w-full kcg-glass bg-[#030305]/85 border border-white/10 rounded-[24px] p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+              
+              {/* Scanlines visual effect */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[size:100%_4px,3px_100%] pointer-events-none opacity-40" />
+
+              {/* Glowing projector halo */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-kcg-red/5 rounded-full blur-[100px] pointer-events-none" />
+
+              {/* Holographic grid visual animation panel */}
+              <div className="h-48 bg-[#050507] border border-white/5 rounded-2xl relative overflow-hidden flex flex-col justify-between p-5 mb-8">
+                
+                {/* Tech background matrix details */}
+                <div className="absolute inset-0 bg-[radial-gradient(#111115_1px,transparent_1px)] bg-[size:1rem_1rem] opacity-60" />
+                <div className="absolute top-4 right-4 flex items-center gap-1.5 font-mono text-[8.5px] text-neutral-500">
+                  <span className="w-1.5 h-1.5 bg-kcg-red rounded-full animate-ping" />
+                  <span>TRANSMISSION_ACTIVE // BANDWIDTH: {selectedScene.flowSpeed}</span>
+                </div>
+
+                {/* Animated content matching the specific visualEffect type */}
+                <div className="relative z-10 flex-1 flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={selectedScene.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-full h-full flex items-center justify-center"
+                    >
+                      {/* Interactive Visual FX representations */}
+                      {selectedScene.visualEffect === 'pulsing-nodes' && (
+                        <div className="relative w-full h-full flex items-center justify-center gap-8">
+                          <span className="absolute inset-x-8 top-1/2 h-[1px] bg-dashed border-b border-white/10 animate-pulse" />
+                          <div className="w-8 h-8 rounded-full bg-kcg-red/20 border border-kcg-red flex items-center justify-center text-[9.5px] font-mono text-kcg-red shadow-[0_0_15px_rgba(200,16,46,0.3)] font-extrabold animate-bounce">DK</div>
+                          <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[9.5px] font-mono text-white font-extrabold animate-pulse">AB</div>
+                          <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[9.5px] font-mono text-white font-extrabold animate-bounce">BM</div>
+                        </div>
+                      )}
+
+                      {selectedScene.visualEffect === 'vector-terrain' && (
+                        <div className="w-full h-full flex items-center justify-center relative">
+                          {/* Simulated vector mountain meshes */}
+                          <div className="w-3/4 h-3/4 border-b border-x border-white/5 rounded-lg flex items-end justify-between p-4 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(200,16,46,0.05)_25%,transparent_25%),linear-gradient(-45deg,rgba(200,16,46,0.05)_25%,transparent_25%)] bg-[size:20px_20px]" />
+                            <div className="w-1/4 h-12 bg-white/5 border-t border-white/20" />
+                            <div className="w-1/3 h-16 bg-kcg-red/10 border-t border-kcg-red/40" />
+                            <div className="w-1/5 h-8 bg-white/5 border-t border-white/20" />
+                            <span className="absolute top-1/3 left-1/3 w-3 h-3 bg-kcg-red rounded-full animate-ping" />
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedScene.visualEffect === 'spinning-rings' && (
+                        <div className="relative w-28 h-28 flex items-center justify-center">
+                          <motion.div 
+                            className="absolute inset-0 rounded-full border border-dashed border-kcg-red/40"
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                          />
+                          <motion.div 
+                            className="absolute inset-3 rounded-full border border-double border-white/10"
+                            animate={{ rotate: -360 }}
+                            transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                          />
+                          <SceneIcon className="w-6 h-6 text-kcg-red animate-pulse" />
+                        </div>
+                      )}
+
+                      {selectedScene.visualEffect === 'biometric-waves' && (
+                        <div className="w-full h-full flex items-center justify-center gap-1.5">
+                          {[30, 60, 45, 90, 75, 40, 85, 50, 70].map((h, i) => (
+                            <motion.div 
+                              key={i} 
+                              className="w-1 bg-gradient-to-t from-kcg-red to-white rounded-full" 
+                              animate={{ height: [`${h}%`, `${Math.min(h + 20, 100)}%`, `${Math.max(h - 20, 10)}%`, `${h}%`] }}
+                              transition={{ duration: 2, repeat: Infinity, delay: i * 0.1, ease: 'easeInOut' }}
+                              style={{ height: `${h}%` }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Subtitle projection path bar */}
+                <div className="flex justify-between items-center text-[8.5px] font-mono text-neutral-500 pt-3 border-t border-white/[0.03]">
+                  <span>HOLO_FEED_ONLINE // COGNITIVE_CALIBRATION: 100%</span>
+                  <span>SYS_KRYPTON_SECURE</span>
+                </div>
+              </div>
+
+              {/* Dynamic Descriptions */}
+              <div className="space-y-6 flex-1 flex flex-col justify-between">
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <span className="px-2.5 py-0.5 text-[8.5px] rounded bg-kcg-red/10 border border-kcg-red/20 text-kcg-red font-black uppercase tracking-widest font-mono inline-block">
+                      {selectedScene.projectionLabel}
+                    </span>
+                    <h4 className="text-xl font-display font-bold uppercase tracking-tight text-white leading-tight">
+                      {selectedScene.title}
+                    </h4>
+                    <p className="text-xs text-neutral-400 font-mono tracking-wide uppercase italic">
+                      {selectedScene.subtitle}
+                    </p>
+                  </div>
+
+                  <div className="p-5 rounded-xl bg-white/[0.01] border border-white/5 space-y-3">
+                    <div className="space-y-1">
+                      <span className="block text-[8px] font-mono text-neutral-500 tracking-widest uppercase font-black">
+                        AMBIANCE CINÉMATIQUE
+                      </span>
+                      <p className="text-[11px] text-neutral-300 leading-relaxed font-sans font-light">
+                        {selectedScene.ambiance}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1 border-t border-white/[0.03] pt-3">
+                      <span className="block text-[8px] font-mono text-neutral-500 tracking-widest uppercase font-black">
+                        RENDU TECHNIQUE & SCÉNARIO D'IA
+                      </span>
+                      <p className="text-[11px] text-neutral-300 leading-relaxed font-sans font-light">
+                        {selectedScene.rendering}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live telemetry details below */}
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/5 font-mono">
+                  {selectedScene.telemetry.map((metric, mIdx) => (
+                    <div key={mIdx} className="bg-white/[0.01] border border-white/5 p-3 rounded-lg text-left">
+                      <span className="block text-[7.5px] text-neutral-500 uppercase tracking-widest">
+                        {metric.label}
+                      </span>
+                      <span className="block text-xs text-white font-extrabold mt-0.5 tracking-wider uppercase">
+                        {metric.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
     </section>
   );
 }
+

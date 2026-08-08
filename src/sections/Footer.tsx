@@ -78,8 +78,21 @@ export default function Footer() {
           <div className="col-span-2 space-y-8">
             <h4 className="text-[10px] uppercase tracking-[0.5em] font-black text-kcg-red italic">Siège Global</h4>
             <div className="space-y-6 text-[11px] text-white/40 font-bold leading-loose uppercase tracking-[0.2em] italic">
-              <p>Innovation Tower, 12ème Étage<br />International Business District<br />Abidjan, Côte d'Ivoire</p>
-              <p className="text-white font-black not-italic border-b border-kcg-red/20 inline-block pb-1">contact@koffmanncapital.group</p>
+              <div>
+                <span className="text-white font-display font-bold not-italic text-sm block mb-1 uppercase tracking-widest">KCG HOUSE</span>
+                <p>101-43 Rue Gnoumaya<br />Palmeraie<br />Abidjan, Côte d'Ivoire</p>
+              </div>
+              <div className="space-y-2 not-italic">
+                <a href="https://koffmann.group" target="_blank" rel="noreferrer" className="text-white hover:text-kcg-red font-black text-xs block tracking-widest transition-colors">
+                  https://koffmann.group
+                </a>
+                <a href="mailto:kcg@koffmann.group" className="text-white font-black text-xs border-b border-kcg-red/30 block hover:text-kcg-red transition-colors">
+                  kcg@koffmann.group
+                </a>
+                <a href="tel:+2250798767763" className="text-white/80 hover:text-kcg-red font-mono text-xs block tracking-wider transition-colors">
+                  +225 07 98 76 77 63
+                </a>
+              </div>
             </div>
           </div>
         </div>

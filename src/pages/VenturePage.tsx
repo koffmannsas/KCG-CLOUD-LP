@@ -95,7 +95,7 @@ function HeroSection() {
               </div>
               <div className="flex justify-between">
                 <span>AUM ESTIMÉ (2026)</span>
-                <span className="text-kcg-red">€2.4B</span>
+                <span className="text-kcg-red">1 500 M-FCFA</span>
               </div>
               <div className="flex justify-between">
                 <span>SECTEURS</span>
@@ -127,10 +127,10 @@ function HeroSection() {
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-kcg-red/10 blur-[40px]" />
             <div className="text-[9px] text-white/40 uppercase tracking-[0.3em] mb-4">Capital Déployé</div>
-            <div className="text-5xl font-medium tracking-tighter text-white mb-2">€840<span className="text-2xl text-white/40">M</span></div>
+            <div className="text-4xl font-medium tracking-tighter text-white mb-2">550<span className="text-xl text-white/40">M FCFA</span></div>
             <div className="flex items-center gap-2 text-green-500/80 text-[10px] uppercase font-mono tracking-widest mt-4">
               <TrendingUp className="w-3 h-3" />
-              <span>Target Q4 2026: €1.2B</span>
+              <span>Target Q4 2026: 780 M-FCFA</span>
             </div>
           </motion.div>
 
@@ -277,7 +277,7 @@ function LiveEconomicSystem() {
           <div className="absolute top-[100px] left-[200px] -translate-x-1/2 -translate-y-1/2 kcg-glass p-6 w-64 border border-white/10 backdrop-blur-md">
             <div className="text-xs uppercase tracking-widest text-white/50 mb-2">Poche PE</div>
             <div className="text-xl font-medium">Cash-Flow Sécurisé</div>
-            <div className="mt-4 text-[10px] font-mono text-green-400">+ €45M IRR ANNUEL</div>
+            <div className="mt-4 text-[10px] font-mono text-green-400">+ 30 M FCFA IRR ANNUEL</div>
           </div>
 
           <div className="absolute top-[100px] left-[800px] -translate-x-1/2 -translate-y-1/2 kcg-glass p-6 w-64 border border-kcg-red/30 bg-kcg-red/5 backdrop-blur-md">
@@ -529,10 +529,10 @@ function InstitutionalTrustSection() {
 
 function PortfolioSection() {
   const portfolio = [
-    { name: 'AfriLogis', sector: 'Infrastructures', type: 'PE', val: '€120M', arr: '€45M', ebitda: '+18%', status: 'Restructuré' },
-    { name: 'PayCFA', sector: 'Fintech / Pay', type: 'VC', val: '€18M', arr: '€2.4M', ebitda: 'N/A', status: 'Scale' },
-    { name: 'AgroWest Holdings', sector: 'Agro-Industrie', type: 'PE', val: '€450M', arr: '€95M', ebitda: '+12%', status: 'Cash-Cow' },
-    { name: 'DataCenter CI', sector: 'Infrastructure Tech', type: 'VC', val: '€45M', arr: '€8.5M', ebitda: '+25%', status: 'Expansion' },
+    { name: 'AfriLogis', sector: 'Infrastructures', type: 'PE', val: '78 M-FCFA', arr: '29 M-FCFA', ebitda: '+18%', status: 'Restructuré' },
+    { name: 'PayCFA', sector: 'Fintech / Pay', type: 'VC', val: '12 M-FCFA', arr: '1.5 M-FCFA', ebitda: 'N/A', status: 'Scale' },
+    { name: 'AgroWest Holdings', sector: 'Agro-Industrie', type: 'PE', val: '290 M-FCFA', arr: '60 M-FCFA', ebitda: '+12%', status: 'Cash-Cow' },
+    { name: 'DataCenter CI', sector: 'Infrastructure Tech', type: 'VC', val: '29 M-FCFA', arr: '5.5 M-FCFA', ebitda: '+25%', status: 'Expansion' },
     { name: 'Koffmann Energy', sector: 'Énergie', type: 'PE', val: 'Undisc.', arr: '-', ebitda: '-', status: 'Acquisition' },
   ];
 
@@ -665,7 +665,7 @@ function StatsSection() {
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-multiply" />
       <div className="container mx-auto px-6 max-w-[90rem] relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-16 text-center divide-x divide-white/20">
         {[
-          { label: "Assets Under Management", val: "€2.4B", sub: "Estimation 2026" },
+          { label: "Assets Under Management", val: "1 500 M-FCFA", sub: "Estimation 2026" },
           { label: "Rendement VC (IRR)", val: "38%", sub: "Top Quartile" },
           { label: "Entreprises PE", val: "14", sub: "Cash-flow positif" },
           { label: "Talents Déployés", val: "+12K", sub: "Emplois directs" }

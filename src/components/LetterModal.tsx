@@ -323,7 +323,7 @@ export default function LetterModal({ letter, isOpen, onClose }: LetterModalProp
                       <form className="flex flex-col sm:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
                         <input 
                           type="email" 
-                          placeholder="votre.nom@organisation.africa"
+                          placeholder="nom@koffmann.group"
                           className="flex-1 h-16 bg-white border border-black/10 px-8 text-sm italic font-serif focus:ring-1 focus:ring-kcg-red focus:border-kcg-red transition-all outline-none"
                         />
                         <button className="h-16 px-10 bg-black text-white hover:bg-kcg-red transition-all duration-300 flex items-center justify-center gap-4 group">
