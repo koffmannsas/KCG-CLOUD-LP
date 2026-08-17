@@ -12,7 +12,7 @@ import GlobalPodcastPlayer from '@/src/components/GlobalPodcastPlayer';
 import { usePodcastStore } from '@/src/store/podcastStore';
 
 // ============================================================
-// LAZY-LOADED APPLICATION MODULES
+// LAZY-LOADED COMPONENTS
 // ============================================================
 
 const ThreeBackground = lazy(
@@ -55,10 +55,6 @@ const Footer = lazy(
   () => import('@/src/sections/Footer')
 );
 
-// ============================================================
-// LAZY-LOADED PAGES
-// ============================================================
-
 const TalentsPage = lazy(
   () => import('@/src/pages/TalentsPage')
 );
@@ -85,74 +81,219 @@ const ContactPage = lazy(
 
 type ActivePage =
   | 'home'
-  | 'talents'
   | 'about'
   | 'venture'
   | 'intelligence'
-  | 'contact';
+  | 'contact'
+  | 'talents';
+
+type PodcastIntention =
+  | 'BUSINESS'
+  | 'VISION'
+  | 'IA'
+  | 'TALENT';
+
+interface ResolvedRoute {
+  page: ActivePage;
+  intention: PodcastIntention;
+}
+
+// ============================================================
+// ROUTING CONFIGURATION
+// ============================================================
+
+const ROUTES: Record<
+  string,
+  ResolvedRoute
+> = {
+  '/': {
+    page: 'home',
+    intention: 'BUSINESS',
+  },
+
+  '/about': {
+    page: 'about',
+    intention: 'VISION',
+  },
+
+  '/venture': {
+    page: 'venture',
+    intention: 'BUSINESS',
+  },
+
+  '/intelligence': {
+    page: 'intelligence',
+    intention: 'IA',
+  },
+
+  '/contact': {
+    page: 'contact',
+    intention: 'BUSINESS',
+  },
+
+  '/talents-portal': {
+    page: 'talents',
+    intention: 'TALENT',
+  },
+};
+
+const HASH_ROUTES: Record<
+  string,
+  ResolvedRoute
+> = {
+  '#about': ROUTES['/about'],
+  '#venture': ROUTES['/venture'],
+  '#intelligence': ROUTES['/intelligence'],
+  '#contact': ROUTES['/contact'],
+  '#talents-portal': ROUTES['/talents-portal'],
+};
+
+const DEFAULT_ROUTE = ROUTES['/'];
+
+// ============================================================
+// ROUTER
+// ============================================================
+
+function normalizePathname(
+  pathname: string
+): string {
+  if (!pathname || pathname === '/') {
+    return '/';
+  }
+
+  const normalized = pathname
+    .replace(/\/+$/, '')
+    .trim();
+
+  return normalized || '/';
+}
+
+function normalizeHash(
+  hash: string
+): string {
+  if (!hash) {
+    return '';
+  }
+
+  return hash
+    .trim()
+    .toLowerCase();
+}
+
+function resolveRoute(): ResolvedRoute {
+  const pathname = normalizePathname(
+    window.location.pathname
+  );
+
+  const hash = normalizeHash(
+    window.location.hash
+  );
+
+  /*
+   * Hash routes intentionally take priority.
+   *
+   * Supported:
+   *   /#about
+   *   /#venture
+   *   /#intelligence
+   *   /#contact
+   *   /#talents-portal
+   */
+  if (hash && HASH_ROUTES[hash]) {
+    return HASH_ROUTES[hash];
+  }
+
+  /*
+   * Clean routes:
+   *   /about
+   *   /venture
+   *   /intelligence
+   *   /contact
+   *   /talents-portal
+   */
+  return ROUTES[pathname] ?? DEFAULT_ROUTE;
+}
 
 // ============================================================
 // COGNITIVE ENGINE
 // ============================================================
 
 function CognitiveEngine() {
-  const setEmotion = usePodcastStore((state) => state.setEmotion);
+  const setEmotion = usePodcastStore(
+    (state) => state.setEmotion
+  );
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let scrollVelocity = 0;
-
-    let idleTimer: ReturnType<typeof setTimeout> | undefined;
-    let ghostModeTimer: ReturnType<typeof setTimeout> | undefined;
-
     let clickCount = 0;
 
-    const clickResetTime = 2000;
+    // Browser-safe timer types.
+    // Do NOT use NodeJS.Timeout here.
+    let idleTimer: number | undefined;
+    let ghostModeTimer: number | undefined;
+
+    const CLICK_RESET_TIME = 2000;
+    const IDLE_DELAY = 5000;
+    const GHOST_MODE_DELAY = 10000;
+
+    const clearTimers = () => {
+      if (idleTimer !== undefined) {
+        window.clearTimeout(idleTimer);
+        idleTimer = undefined;
+      }
+
+      if (ghostModeTimer !== undefined) {
+        window.clearTimeout(ghostModeTimer);
+        ghostModeTimer = undefined;
+      }
+    };
 
     const determineEmotion = () => {
-      if (clickCount > 3 || Math.abs(scrollVelocity) > 100) {
+      const velocity = Math.abs(scrollVelocity);
+
+      if (clickCount > 3 || velocity > 100) {
         setEmotion('RUSHED');
-      } else if (
-        Math.abs(scrollVelocity) > 10 &&
-        Math.abs(scrollVelocity) < 40
-      ) {
+        return;
+      }
+
+      if (velocity > 10 && velocity < 40) {
         setEmotion('FASCINATED');
-      } else if (
+        return;
+      }
+
+      if (
         scrollVelocity === 0 &&
         clickCount === 0
       ) {
         setEmotion('CONTEMPLATIVE');
-      } else {
-        setEmotion('ACTIVE');
+        return;
       }
+
+      setEmotion('ACTIVE');
     };
 
     const scheduleIdleState = () => {
-      if (idleTimer) {
-        clearTimeout(idleTimer);
-      }
+      clearTimers();
 
-      if (ghostModeTimer) {
-        clearTimeout(ghostModeTimer);
-      }
-
-      idleTimer = setTimeout(() => {
+      idleTimer = window.setTimeout(() => {
         scrollVelocity = 0;
         determineEmotion();
 
-        // After extended silence, trigger ghost mode.
-        ghostModeTimer = setTimeout(() => {
+        ghostModeTimer = window.setTimeout(() => {
           usePodcastStore
             .getState()
             .triggerGhostMode();
-        }, 10000);
-      }, 5000);
+        }, GHOST_MODE_DELAY);
+      }, IDLE_DELAY);
     };
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      scrollVelocity = currentScrollY - lastScrollY;
+      scrollVelocity =
+        currentScrollY - lastScrollY;
+
       lastScrollY = currentScrollY;
 
       determineEmotion();
@@ -163,15 +304,14 @@ function CognitiveEngine() {
       clickCount += 1;
 
       determineEmotion();
+      scheduleIdleState();
 
       window.setTimeout(() => {
         clickCount = Math.max(
           0,
           clickCount - 1
         );
-      }, clickResetTime);
-
-      scheduleIdleState();
+      }, CLICK_RESET_TIME);
     };
 
     window.addEventListener(
@@ -185,6 +325,8 @@ function CognitiveEngine() {
       handleClick
     );
 
+    scheduleIdleState();
+
     return () => {
       window.removeEventListener(
         'scroll',
@@ -196,106 +338,11 @@ function CognitiveEngine() {
         handleClick
       );
 
-      if (idleTimer) {
-        clearTimeout(idleTimer);
-      }
-
-      if (ghostModeTimer) {
-        clearTimeout(ghostModeTimer);
-      }
+      clearTimers();
     };
   }, [setEmotion]);
 
   return null;
-}
-
-// ============================================================
-// ROUTER
-// ============================================================
-
-function resolveRoute(): {
-  page: ActivePage;
-  intention:
-    | 'BUSINESS'
-    | 'VISION'
-    | 'IA'
-    | 'TALENT';
-} {
-  const pathname = window.location.pathname;
-  const hash = window.location.hash;
-
-  /*
-   * Hash routes take priority when present.
-   *
-   * Supported:
-   *   /#about
-   *   /#venture
-   *   /#intelligence
-   *   /#contact
-   *   /#talents-portal
-   *
-   * Clean URLs are also supported:
-   *   /about
-   *   /venture
-   *   /intelligence
-   *   /contact
-   *   /talents-portal
-   */
-
-  if (
-    hash === '#talents-portal' ||
-    pathname === '/talents-portal'
-  ) {
-    return {
-      page: 'talents',
-      intention: 'TALENT',
-    };
-  }
-
-  if (
-    hash === '#about' ||
-    pathname === '/about'
-  ) {
-    return {
-      page: 'about',
-      intention: 'VISION',
-    };
-  }
-
-  if (
-    hash === '#venture' ||
-    pathname === '/venture'
-  ) {
-    return {
-      page: 'venture',
-      intention: 'BUSINESS',
-    };
-  }
-
-  if (
-    hash === '#intelligence' ||
-    pathname === '/intelligence'
-  ) {
-    return {
-      page: 'intelligence',
-      intention: 'IA',
-    };
-  }
-
-  if (
-    hash === '#contact' ||
-    pathname === '/contact'
-  ) {
-    return {
-      page: 'contact',
-      intention: 'BUSINESS',
-    };
-  }
-
-  return {
-    page: 'home',
-    intention: 'BUSINESS',
-  };
 }
 
 // ============================================================
@@ -304,10 +351,210 @@ function resolveRoute(): {
 
 function PageLoadingFallback() {
   return (
-    <div className="fixed inset-0 z-[90] bg-black flex items-center justify-center">
-      <div className="w-10 h-10 rounded-full border border-kcg-red/30 border-t-kcg-red animate-spin" />
+    <div
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black"
+      role="status"
+      aria-label="Loading Koffmann Capital Group"
+    >
+      <div
+        className="h-10 w-10 animate-spin rounded-full border border-kcg-red/30 border-t-kcg-red"
+        aria-hidden="true"
+      />
     </div>
   );
+}
+
+// ============================================================
+// CINEMATIC LOADER
+// ============================================================
+
+function CinematicLoader() {
+  return (
+    <motion.div
+      key="loader"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-12 bg-black"
+    >
+      <div className="relative flex h-64 w-64 items-center justify-center">
+
+        {/* Fireball Halo */}
+        <motion.div
+          animate={{
+            scale: [1, 1.4, 1],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute inset-0 z-0 m-auto h-32 w-32 rounded-full bg-kcg-red blur-[40px]"
+          aria-hidden="true"
+        />
+
+        {/* Rotating KCG Ring */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+          className="absolute inset-0 z-10"
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 200 200"
+            className="h-full w-full"
+            role="presentation"
+          >
+            <path
+              id="kcg-loader-text-path"
+              d="M 100,100 m -80,0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0"
+              fill="none"
+            />
+
+            <text className="fill-white/80 font-display text-[13px] font-medium uppercase tracking-[0.16em]">
+              <textPath
+                href="#kcg-loader-text-path"
+                startOffset="0%"
+              >
+                KOFFMANN CAPITAL GROUP â€¢ KOFFMANN CAPITAL GROUP â€¢
+              </textPath>
+            </text>
+          </svg>
+        </motion.div>
+
+        {/* KCG Monogram */}
+        <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-kcg-red/30 kcg-glass shadow-[0_0_30px_rgba(200,16,46,0.15)]">
+
+          <div
+            className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.05]"
+            aria-hidden="true"
+          />
+
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/fgfs-ai.firebasestorage.app/o/Logo%20GCG%20500X500.png?alt=media&token=0d7c51f1-ae14-4826-9438-98688980178c"
+            alt="KCG"
+            className="relative z-10 h-16 w-16 object-contain"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4 text-center">
+
+        <motion.p
+          initial={{
+            opacity: 0,
+            y: 10,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          className="text-[10px] font-black uppercase tracking-[0.8em] text-kcg-red"
+        >
+          KCG SOVEREIGN PROXIED
+        </motion.p>
+
+        <div
+          className="relative h-px w-64 overflow-hidden bg-white/5"
+          aria-hidden="true"
+        >
+          <motion.div
+            initial={{ left: '-100%' }}
+            animate={{ left: '100%' }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute bottom-0 top-0 w-1/2 bg-gradient-to-r from-transparent via-kcg-red to-transparent"
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// HOME PAGE
+// ============================================================
+
+function HomePage() {
+  return (
+    <>
+      <ThreeBackground />
+
+      <Navbar />
+
+      <main>
+        <Hero />
+        <Vision />
+        <Ecosystem />
+        <Intelligence />
+        <WhyKCG />
+        <Leadership />
+        <Talents />
+        <Newsletter />
+      </main>
+
+      <Footer />
+    </>
+  );
+}
+
+// ============================================================
+// APPLICATION PAGES
+// ============================================================
+
+function ApplicationPage({
+  activePage,
+}: {
+  activePage: ActivePage;
+}) {
+  switch (activePage) {
+    case 'home':
+      return <HomePage />;
+
+    case 'about':
+      return <AboutPage />;
+
+    case 'venture':
+      return (
+        <div className="relative bg-black text-white">
+          <Navbar />
+          <VenturePage />
+          <Footer />
+        </div>
+      );
+
+    case 'intelligence':
+      return (
+        <div className="relative bg-black text-white">
+          <Navbar />
+          <IntelligencePage />
+          <Footer />
+        </div>
+      );
+
+    case 'contact':
+      return <ContactPage />;
+
+    case 'talents':
+      return (
+        <>
+          <TalentsPage />
+          <Footer />
+        </>
+      );
+
+    default:
+      return <HomePage />;
+  }
 }
 
 // ============================================================
@@ -315,7 +562,8 @@ function PageLoadingFallback() {
 // ============================================================
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
   const [activePage, setActivePage] =
     useState<ActivePage>('home');
@@ -347,10 +595,6 @@ export default function App() {
         .setIntention(route.intention);
     };
 
-    /*
-     * Resolve immediately on first load.
-     * This is what makes /contact work correctly.
-     */
     handleRouteChange();
 
     window.addEventListener(
@@ -358,10 +602,6 @@ export default function App() {
       handleRouteChange
     );
 
-    /*
-     * popstate supports browser navigation
-     * such as Back / Forward.
-     */
     window.addEventListener(
       'popstate',
       handleRouteChange
@@ -381,13 +621,10 @@ export default function App() {
   }, []);
 
   // ----------------------------------------------------------
-  // INITIAL APPLICATION LOADING
+  // CINEMATIC INITIAL LOADING
   // ----------------------------------------------------------
 
   useEffect(() => {
-    /*
-     * Preserve the existing KCG cinematic loading experience.
-     */
     const timer = window.setTimeout(() => {
       setLoading(false);
     }, 5000);
@@ -404,123 +641,20 @@ export default function App() {
   return (
     <div className="relative text-white selection:bg-kcg-red selection:text-white">
 
-      <AnimatePresence mode="wait">
-        <Suspense fallback={<PageLoadingFallback />}>
-          {/* ==================================================
-              KCG CINEMATIC LOADER
-              ================================================== */}
+      {/*
+       * IMPORTANT:
+       * Suspense intentionally wraps AnimatePresence.
+       * This prevents AnimatePresence from losing track
+       * of lazy-loaded route children.
+       */}
+      <Suspense
+        fallback={<PageLoadingFallback />}
+      >
+        <AnimatePresence mode="wait">
 
-          {loading && (
-            <motion.div
-              key="loader"
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center gap-12"
-            >
-              <div className="relative flex items-center justify-center w-64 h-64">
-
-                {/* Fireball Halo */}
-                <motion.div
-                  animate={{
-                    scale: [1, 1.4, 1],
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                  className="absolute inset-0 m-auto w-32 h-32 bg-kcg-red rounded-full blur-[40px] z-0"
-                />
-
-                {/* Rotating KCG Ring */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{
-                    duration: 12,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                  className="absolute inset-0 z-10"
-                >
-                  <svg
-                    viewBox="0 0 200 200"
-                    className="w-full h-full"
-                  >
-                    <path
-                      id="textPath"
-                      d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0"
-                      fill="none"
-                    />
-
-                    <text className="text-[13px] uppercase tracking-[0.16em] font-display fill-white/80 font-medium">
-                      <textPath
-                        href="#textPath"
-                        startOffset="0%"
-                      >
-                        KOFFMANN CAPITAL GROUP • KOFFMANN CAPITAL GROUP •&nbsp;
-                      </textPath>
-                    </text>
-                  </svg>
-                </motion.div>
-
-                {/* KCG Monogram */}
-                <div className="absolute w-28 h-28 rounded-full kcg-glass flex items-center justify-center border border-kcg-red/30 shadow-[0_0_30px_rgba(200,16,46,0.15)] relative overflow-hidden">
-
-                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.05] pointer-events-none" />
-
-                  <img
-                    src="https://firebasestorage.googleapis.com/v0/b/fgfs-ai.firebasestorage.app/o/Logo%20GCG%20500X500.png?alt=media&token=0d7c51f1-ae14-4826-9438-98688980178c"
-                    alt="KCG Monogram"
-                    className="w-16 h-16 object-contain relative z-10"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4 text-center">
-
-                <motion.p
-                  initial={{
-                    opacity: 0,
-                    y: 10,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  className="text-[10px] uppercase tracking-[0.8em] text-kcg-red font-black"
-                >
-                  KCG SOVEREIGN PROXIED
-                </motion.p>
-
-                <div className="w-64 h-[1px] bg-white/5 relative overflow-hidden">
-                  <motion.div
-                    initial={{
-                      left: '-100%',
-                    }}
-                    animate={{
-                      left: '100%',
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                    className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-kcg-red to-transparent"
-                  />
-                </div>
-
-              </div>
-            </motion.div>
-          )}
-
-          {/* ==================================================
-              APPLICATION PAGES
-              ================================================== */}
-
-          {!loading && (
+          {loading ? (
+            <CinematicLoader />
+          ) : (
             <motion.div
               key={activePage}
               initial={{ opacity: 0 }}
@@ -528,97 +662,29 @@ export default function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
             >
-
-              {/* ================= HOME ================= */}
-
-              {activePage === 'home' && (
-                <>
-                  <ThreeBackground />
-
-                  <Navbar />
-
-                  <main>
-                    <Hero />
-                    <Vision />
-                    <Ecosystem />
-                    <Intelligence />
-                    <WhyKCG />
-                    <Leadership />
-                    <Talents />
-                    <Newsletter />
-                  </main>
-
-                  <Footer />
-                </>
-              )}
-
-              {/* ================= ABOUT ================= */}
-
-              {activePage === 'about' && (
-                <AboutPage />
-              )}
-
-              {/* ================= VENTURE ================= */}
-
-              {activePage === 'venture' && (
-                <div className="bg-black text-white relative">
-                  <Navbar />
-                  <VenturePage />
-                  <Footer />
-                </div>
-              )}
-
-              {/* ================= INTELLIGENCE ================= */}
-
-              {activePage === 'intelligence' && (
-                <div className="bg-black text-white relative">
-                  <Navbar />
-                  <IntelligencePage />
-                  <Footer />
-                </div>
-              )}
-
-              {/* ================= CONTACT ================= */}
-
-              {activePage === 'contact' && (
-                <ContactPage />
-              )}
-
-              {/* ================= TALENTS ================= */}
-
-              {activePage === 'talents' && (
-                <>
-                  <TalentsPage />
-                  <Footer />
-                </>
-              )}
-
+              <ApplicationPage
+                activePage={activePage}
+              />
             </motion.div>
           )}
 
-        </Suspense>
-      </AnimatePresence>
+        </AnimatePresence>
+      </Suspense>
 
-      {/* ======================================================
-          GLOBAL KCG SYSTEMS
-          ====================================================== */}
-
+      {/* Global KCG systems */}
       <CognitiveEngine />
 
       <GlobalPodcastPlayer />
 
-      {/* ======================================================
-          CINEMATIC GRAIN OVERLAY
-          ====================================================== */}
-
+      {/* Cinematic grain */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-[0.03] z-[99]"
+        className="pointer-events-none fixed inset-0 z-[99] opacity-[0.03]"
         style={{
           backgroundImage:
             'url("https://grainy-gradients.vercel.app/noise.svg")',
         }}
+        aria-hidden="true"
       />
-
     </div>
   );
 }

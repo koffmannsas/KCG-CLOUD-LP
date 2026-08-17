@@ -53,6 +53,9 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  // Explicitly serve static assets BEFORE the SPA fallback to prevent index.html from overriding favicons/manifests
+  app.use(express.static(path.join(process.cwd(), 'public')));
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -64,6 +67,8 @@ async function startServer() {
     // Live Cloud Run serves compiled static static production assets from standard client path
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+
+    // SPA Fallback must strictly be the LAST route evaluated
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
