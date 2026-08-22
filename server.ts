@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from 'url';
@@ -61,13 +61,20 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // Live Cloud Run serves compiled static static production assets from standard client path
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
+  const distPath = path.join(process.cwd(), 'dist');
+  const publicPath = path.join(process.cwd(), 'public');
+
+  // Serve public branding assets before SPA fallback
+  app.use(express.static(publicPath));
+
+  // Serve compiled production assets
+  app.use(express.static(distPath));
+
+  // SPA fallback â€” must remain last
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
